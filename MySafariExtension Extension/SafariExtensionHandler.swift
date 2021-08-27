@@ -30,4 +30,19 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         return SafariExtensionViewController.shared
     }
 
+    override func contextMenuItemSelected(withCommand command: String, in page: SFSafariPage, userInfo: [String : Any]? = nil) {
+        switch command {
+        case "Find":
+            if let userInfo = userInfo, let text = userInfo["selection"] {
+                NSLog("Received text: \(text)")
+                sendResponse(to: page)
+            }
+        default:
+            break
+        }
+    }
+    
+    func sendResponse(to page: SFSafariPage) {
+        page.dispatchMessageToScript(withName: "Find", userInfo: ["response": "I am message from handler"])
+    }
 }
